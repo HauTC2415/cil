@@ -6,3 +6,4 @@ Thumbs.db
 *.log
 .env
 cil_markdown_file_structure_v_1.md
+.claude/settings.local.json

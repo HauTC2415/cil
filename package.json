@@ -1,5 +1,5 @@
 {
-  "name": "@hautc/cil",
+  "name": "@hautc.it/cil",
   "version": "1.0.0",
   "description": "Claude Intelligence Layer — token-efficient context runtime for Claude Code",
   "type": "module",
@@ -34,7 +34,7 @@
   "homepage": "https://github.com/HauTC2415/cil#readme",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/HauTC2415/cil.git"
+    "url": "git+https://github.com/HauTC2415/cil.git"
   },
   "bugs": {
     "url": "https://github.com/HauTC2415/cil/issues"

@@ -1,9 +1,33 @@
 # Changelog
 
-All notable changes to `@hautc/cil` will be documented here.
+All notable changes to `@hautc.it/cil` will be documented here.
 
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 Versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
+
+---
+
+## [1.1.0] — 2026-05-07
+
+### Added
+
+- GitHub Actions CI workflow (`ci.yml`): typecheck + build on push/PR to main, matrix Node 20 & 22
+- Auto-publish workflow (`publish.yml`): triggers on `v*` tags via `NPM_TOKEN` secret (currently disabled — enable after adding secret)
+
+### Fixed
+
+- `PreToolUse` hook now correctly includes `matcher: "Bash"` in settings
+- Explicit `cil compress` instruction added to CLAUDE.md as reliable compression fallback
+- Package name corrected to `@hautc.it/cil` throughout
+
+---
+
+## [1.0.1] — 2026-05-07
+
+### Fixed
+
+- Package scoped name updated to `@hautc.it/cil` (npm username)
+- MCP server registered at user scope for cross-project availability
 
 ---
 
@@ -25,7 +49,7 @@ Versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 - CLAUDE.md template combining caveman + karpathy principles
 - Session snapshot: ≤2KB state preserved across context compactions
 - Cross-platform support: Windows, macOS, Linux
-- Global install: `npm install -g @hautc/cil`
+- Global install: `npm install -g @hautc.it/cil`
 
 ### Inspired by
 

@@ -1,0 +1,13 @@
+src/
+*.ts
+tsconfig.json
+.claude/
+.cil/
+node_modules/
+*.map
+CONTRIBUTING.md
+CHANGELOG.md
+examples/
+docs/
+cil_markdown_file_structure_v_1.md
+.gitignore

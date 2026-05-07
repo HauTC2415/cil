@@ -1,0 +1,68 @@
+{
+  "name": "@hautc/cil",
+  "version": "1.0.0",
+  "description": "Claude Intelligence Layer — token-efficient context runtime for Claude Code",
+  "type": "module",
+  "bin": {
+    "cil": "./dist/index.js",
+    "cil-mcp": "./dist/mcp/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc -w",
+    "prepublishOnly": "npm run build",
+    "start:mcp": "node dist/mcp/index.js"
+  },
+  "keywords": [
+    "claude",
+    "claude-code",
+    "ai",
+    "llm",
+    "context",
+    "memory",
+    "mcp",
+    "workflow",
+    "token-optimization",
+    "developer-tools"
+  ],
+  "author": {
+    "name": "HauTC",
+    "email": "hautc.it@gmail.com",
+    "url": "https://github.com/HauTC2415"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/HauTC2415/cil#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/HauTC2415/cil.git"
+  },
+  "bugs": {
+    "url": "https://github.com/HauTC2415/cil/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "better-sqlite3": "^11.10.0",
+    "chalk": "^5.3.0",
+    "commander": "^12.1.0",
+    "fs-extra": "^11.2.0",
+    "ora": "^8.1.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^20.14.0",
+    "typescript": "^5.5.0"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "files": [
+    "dist/",
+    "templates/",
+    "README.md",
+    "LICENSE"
+  ]
+}

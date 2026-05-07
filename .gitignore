@@ -1,0 +1,8 @@
+node_modules/
+dist/
+*.js.map
+.DS_Store
+Thumbs.db
+*.log
+.env
+cil_markdown_file_structure_v_1.md

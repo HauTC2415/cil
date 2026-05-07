@@ -1,5 +1,16 @@
 {
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cil hook pre-tool-use"
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
       {
         "hooks": [

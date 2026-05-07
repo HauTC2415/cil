@@ -1,51 +1,66 @@
-# Engineering
+# Behavior
 
-Think before coding. Surface assumptions first.
-Prefer surgical changes — touch only what's asked.
-Validate assumptions. Implement incrementally. Verify after.
-Keep functions small. Prefer readability. Avoid premature abstraction.
+Ask before proceeding when: requirements are ambiguous, scope expands beyond what was asked, a change is irreversible, or touching security/auth/data migration.
+Proceed autonomously when: the task is clearly scoped, tests will catch regressions, and the change is reversible.
 
-# Response Style
+Default response: concise fragments. Pattern: `[thing] [action] [reason].`
+Mid-task checkpoints (ultra): `Step 2/5: schema migrated. Running tests.`
+Explanations/design (lite): full sentences, grammar preserved.
+Drop compression for: security warnings, ambiguous sequences, error messages.
 
-Concise. Fragments over prose. Signal over noise.
-Pattern: [thing] [action] [reason]. [next step].
-Skip restating what was done. Skip trailing summaries. Code speaks.
-Auto-clarity: drop compression for security warnings and ambiguous sequences.
+# Output Compression
+
+For commands that produce verbose output, always append `2>&1 | cil compress`:
+```
+git diff HEAD | cil compress
+git log --oneline -30 | cil compress
+npm test 2>&1 | cil compress
+find . -name "*.ts" | cil compress
+```
+Apply when output is likely > 50 lines. The PreToolUse hook attempts this automatically for known commands.
+
+# Code
+
+Write the minimum code that solves the stated problem. No speculative features.
+Touch only what's asked. No opportunistic refactors.
+Validate at boundaries (user input, external APIs). Trust internal code.
+Fail fast with explicit errors. No silent failures, no swallowed exceptions.
+Every bug fix ships with a test that would have caught it.
+
+Before implementing:
+1. Read relevant files. Map what exists.
+2. State assumptions explicitly.
+3. Define verifiable success criteria.
+
+# Security
+
+Never log or expose: secrets, tokens, passwords, PII.
+Validate and sanitize all external input before use.
+Parameterize all queries. No string interpolation into SQL/shell.
+Flag any change touching auth, permissions, or data migration before proceeding.
 
 # Workflow
 
-Use /develop for new features and bugs.
-Use /review before every commit.
-Use /commit to generate commit messages.
-Use /wrap-up at session end to capture learnings.
-Use /learn to persist a specific insight.
-Use /retrieve to search past decisions and context.
+| When | Command |
+|---|---|
+| New feature or bug | `/develop` |
+| Before committing | `/review` |
+| Ready to commit | `/commit` |
+| Context filling up or session ending | `/wrap-up` |
+| Recall past decisions | `/retrieve <query>` |
+| Save a specific insight | `/learn <insight>` |
 
-# Context Management
+Run `/wrap-up` proactively — don't wait until context is full.
 
-Store decisions, not transcripts.
-Store constraints, not conversations.
-Retrieve by relevance only — call /retrieve before re-deriving known context.
-Summarize aggressively. Prefer references over repetition.
+# Memory
 
-# Token Efficiency
+Store via MCP `memory_store(category, content, tags[])`:
+- `decision` — what was chosen and why
+- `constraint` — limits that must be respected
+- `architecture` — structural facts about the system
+- `learning` — what changed your understanding
+- `task` — work to resume next session
 
-Minimize repeated context.
-Retrieve selectively — don't load what you don't need.
-Avoid verbose explanations when code is self-evident.
-Compress before compacting: run /wrap-up when context fills.
+Search before starting: `memory_search("topic")` — retrieve before re-deriving.
 
-# Agent Escalation
-
-Default: single agent.
-Escalate to skill invocation when specialized heuristics help.
-Escalate to sub-agent only for bounded, isolated tasks.
-Never: agent sprawl, open-ended sub-agents, shared mutable state.
-
-# Memory (CIL MCP)
-
-Tools available via CIL MCP server:
-- memory_store(category, content, tags[]) — persist a memory
-- memory_search(query, limit?) — FTS5 search over memory
-- session_snapshot(summary, decisions[]) — compact session state
-- session_restore() — retrieve last snapshot + relevant memories
+Do not store: build errors, tool output, compile warnings, task progress, temporary state.

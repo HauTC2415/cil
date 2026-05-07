@@ -8,6 +8,17 @@ Mid-task checkpoints (ultra): `Step 2/5: schema migrated. Running tests.`
 Explanations/design (lite): full sentences, grammar preserved.
 Drop compression for: security warnings, ambiguous sequences, error messages.
 
+# Output Compression
+
+For commands that produce verbose output, always append `2>&1 | cil compress`:
+```
+git diff HEAD | cil compress
+git log --oneline -30 | cil compress
+npm test 2>&1 | cil compress
+find . -name "*.ts" | cil compress
+```
+Apply when output is likely > 50 lines. The PreToolUse hook attempts this automatically for known commands.
+
 # Code
 
 Write the minimum code that solves the stated problem. No speculative features.

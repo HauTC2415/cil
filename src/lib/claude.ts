@@ -49,24 +49,25 @@ export function configureHooks(settingsPath: string): void {
   const settings = readSettings(settingsPath);
   if (!settings.hooks) settings.hooks = {};
 
-  const hookEvents: Record<string, string> = {
-    PreToolUse: 'cil hook pre-tool-use',
-    PostToolUse: 'cil hook post-tool-use',
-    PreCompact: 'cil hook pre-compact',
-    Stop: 'cil hook session-stop',
+  type HookDef = { matcher?: string; command: string };
+  const hookDefs: Record<string, HookDef> = {
+    PreToolUse:  { matcher: 'Bash', command: 'cil hook pre-tool-use' },
+    PostToolUse: { command: 'cil hook post-tool-use' },
+    PreCompact:  { command: 'cil hook pre-compact' },
+    Stop:        { command: 'cil hook session-stop' },
   };
 
-  for (const [event, command] of Object.entries(hookEvents)) {
+  for (const [event, def] of Object.entries(hookDefs)) {
     if (!settings.hooks[event]) settings.hooks[event] = [];
 
     const alreadyConfigured = settings.hooks[event]!.some(
-      (entry) => entry.hooks?.some((h) => h.command === command),
+      (entry) => entry.hooks?.some((h) => h.command === def.command),
     );
 
     if (!alreadyConfigured) {
-      settings.hooks[event]!.push({
-        hooks: [{ type: 'command', command }],
-      });
+      const entry: HookEntry = { hooks: [{ type: 'command', command: def.command }] };
+      if (def.matcher) entry.matcher = def.matcher;
+      settings.hooks[event]!.push(entry);
     }
   }
 

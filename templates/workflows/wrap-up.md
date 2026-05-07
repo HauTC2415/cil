@@ -25,6 +25,9 @@ Store each learning:
 memory_store("learning", "[the insight]", ["relevant", "tags"])
 ```
 
+**What to store:** decisions, constraints, architecture facts, discovered limitations, patterns that worked.
+**Do NOT store:** build errors, compile warnings, temporary bugs fixed during the session, tool output logs.
+
 ---
 
 ## Step 3 — Capture decisions

@@ -74,3 +74,6 @@ Tools available via CIL MCP server:
 - memory_search(query, limit?) — FTS5 search over memory
 - session_snapshot(summary, decisions[]) — compact session state
 - session_restore() — retrieve last snapshot + relevant memories
+
+Store: decisions, constraints, architecture facts, learnings, next tasks.
+Do NOT store: build errors, compile warnings, tool output, temporary debugging info, task progress logs.

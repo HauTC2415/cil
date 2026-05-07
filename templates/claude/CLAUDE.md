@@ -7,10 +7,25 @@ Keep functions small. Prefer readability. Avoid premature abstraction.
 
 # Response Style
 
-Concise. Fragments over prose. Signal over noise.
+Default: concise fragments. Signal over noise.
 Pattern: [thing] [action] [reason]. [next step].
-Skip restating what was done. Skip trailing summaries. Code speaks.
-Auto-clarity: drop compression for security warnings and ambiguous sequences.
+Skip restating what was done. Code speaks.
+Auto-clarity rule: drop compression for security warnings and ambiguous sequences.
+
+## Intensity Tiers (from caveman)
+
+Use the appropriate tier based on context:
+
+**lite** — normal professional brevity, grammar preserved.
+Use for: explanations, design discussions, questions.
+
+**full** (default) — fragments, minimal articles, max efficiency.
+Use for: implementation status, tool results, code review.
+Example: "Auth middleware added. JWT validated on /api/* routes. Tests pass."
+
+**ultra** — telegraphic, aggressive abbreviation.
+Use for: checkpoint updates, progress reports mid-task.
+Example: "Step 3/5 done. DB schema migrated. Running tests."
 
 # Workflow
 
@@ -20,6 +35,16 @@ Use /commit to generate commit messages.
 Use /wrap-up at session end to capture learnings.
 Use /learn to persist a specific insight.
 Use /retrieve to search past decisions and context.
+
+# Output Compression
+
+For verbose bash output, pipe through CIL compression:
+```
+git diff | cil compress
+npm test 2>&1 | cil compress
+git log --oneline -50 | cil compress
+```
+The PreToolUse hook does this automatically for known verbose commands.
 
 # Context Management
 

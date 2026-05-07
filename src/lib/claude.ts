@@ -50,6 +50,7 @@ export function configureHooks(settingsPath: string): void {
   if (!settings.hooks) settings.hooks = {};
 
   const hookEvents: Record<string, string> = {
+    PreToolUse: 'cil hook pre-tool-use',
     PostToolUse: 'cil hook post-tool-use',
     PreCompact: 'cil hook pre-compact',
     Stop: 'cil hook session-stop',

@@ -6,6 +6,7 @@ import { compactCommand } from './commands/compact.js';
 import { retrieveCommand } from './commands/retrieve.js';
 import { resetCommand } from './commands/reset.js';
 import { hookCommand } from './commands/hook.js';
+import { compressCommand } from './commands/compress.js';
 
 const program = new Command();
 
@@ -49,6 +50,12 @@ program
   .option('--db', 'Reset memory database')
   .option('--all', 'Reset all CIL data')
   .action((options) => resetCommand({ db: options.db, all: options.all }));
+
+program
+  .command('compress')
+  .description('Compress stdin output (RTK-style: filter, group, truncate, deduplicate)')
+  .option('-n, --lines <n>', 'Max output lines', '150')
+  .action((options) => compressCommand({ lines: parseInt(options.lines, 10) }));
 
 // Internal command used by Claude Code hooks — not shown in help
 program

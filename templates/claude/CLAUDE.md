@@ -1,79 +1,55 @@
-# Engineering
+# Behavior
 
-Think before coding. Surface assumptions first.
-Prefer surgical changes — touch only what's asked.
-Validate assumptions. Implement incrementally. Verify after.
-Keep functions small. Prefer readability. Avoid premature abstraction.
+Ask before proceeding when: requirements are ambiguous, scope expands beyond what was asked, a change is irreversible, or touching security/auth/data migration.
+Proceed autonomously when: the task is clearly scoped, tests will catch regressions, and the change is reversible.
 
-# Response Style
+Default response: concise fragments. Pattern: `[thing] [action] [reason].`
+Mid-task checkpoints (ultra): `Step 2/5: schema migrated. Running tests.`
+Explanations/design (lite): full sentences, grammar preserved.
+Drop compression for: security warnings, ambiguous sequences, error messages.
 
-Default: concise fragments. Signal over noise.
-Pattern: [thing] [action] [reason]. [next step].
-Skip restating what was done. Code speaks.
-Auto-clarity rule: drop compression for security warnings and ambiguous sequences.
+# Code
 
-## Intensity Tiers (from caveman)
+Write the minimum code that solves the stated problem. No speculative features.
+Touch only what's asked. No opportunistic refactors.
+Validate at boundaries (user input, external APIs). Trust internal code.
+Fail fast with explicit errors. No silent failures, no swallowed exceptions.
+Every bug fix ships with a test that would have caught it.
 
-Use the appropriate tier based on context:
+Before implementing:
+1. Read relevant files. Map what exists.
+2. State assumptions explicitly.
+3. Define verifiable success criteria.
 
-**lite** — normal professional brevity, grammar preserved.
-Use for: explanations, design discussions, questions.
+# Security
 
-**full** (default) — fragments, minimal articles, max efficiency.
-Use for: implementation status, tool results, code review.
-Example: "Auth middleware added. JWT validated on /api/* routes. Tests pass."
-
-**ultra** — telegraphic, aggressive abbreviation.
-Use for: checkpoint updates, progress reports mid-task.
-Example: "Step 3/5 done. DB schema migrated. Running tests."
+Never log or expose: secrets, tokens, passwords, PII.
+Validate and sanitize all external input before use.
+Parameterize all queries. No string interpolation into SQL/shell.
+Flag any change touching auth, permissions, or data migration before proceeding.
 
 # Workflow
 
-Use /develop for new features and bugs.
-Use /review before every commit.
-Use /commit to generate commit messages.
-Use /wrap-up at session end to capture learnings.
-Use /learn to persist a specific insight.
-Use /retrieve to search past decisions and context.
+| When | Command |
+|---|---|
+| New feature or bug | `/develop` |
+| Before committing | `/review` |
+| Ready to commit | `/commit` |
+| Context filling up or session ending | `/wrap-up` |
+| Recall past decisions | `/retrieve <query>` |
+| Save a specific insight | `/learn <insight>` |
 
-# Output Compression
+Run `/wrap-up` proactively — don't wait until context is full.
 
-For verbose bash output, pipe through CIL compression:
-```
-git diff | cil compress
-npm test 2>&1 | cil compress
-git log --oneline -50 | cil compress
-```
-The PreToolUse hook does this automatically for known verbose commands.
+# Memory
 
-# Context Management
+Store via MCP `memory_store(category, content, tags[])`:
+- `decision` — what was chosen and why
+- `constraint` — limits that must be respected
+- `architecture` — structural facts about the system
+- `learning` — what changed your understanding
+- `task` — work to resume next session
 
-Store decisions, not transcripts.
-Store constraints, not conversations.
-Retrieve by relevance only — call /retrieve before re-deriving known context.
-Summarize aggressively. Prefer references over repetition.
+Search before starting: `memory_search("topic")` — retrieve before re-deriving.
 
-# Token Efficiency
-
-Minimize repeated context.
-Retrieve selectively — don't load what you don't need.
-Avoid verbose explanations when code is self-evident.
-Compress before compacting: run /wrap-up when context fills.
-
-# Agent Escalation
-
-Default: single agent.
-Escalate to skill invocation when specialized heuristics help.
-Escalate to sub-agent only for bounded, isolated tasks.
-Never: agent sprawl, open-ended sub-agents, shared mutable state.
-
-# Memory (CIL MCP)
-
-Tools available via CIL MCP server:
-- memory_store(category, content, tags[]) — persist a memory
-- memory_search(query, limit?) — FTS5 search over memory
-- session_snapshot(summary, decisions[]) — compact session state
-- session_restore() — retrieve last snapshot + relevant memories
-
-Store: decisions, constraints, architecture facts, learnings, next tasks.
-Do NOT store: build errors, compile warnings, tool output, temporary debugging info, task progress logs.
+Do not store: build errors, tool output, compile warnings, task progress, temporary state.

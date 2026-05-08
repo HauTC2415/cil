@@ -1,58 +1,32 @@
-# /develop
-
-Task: $ARGUMENTS
-
+---
+description: Structured development cycle — Research → Feasibility → Plan → Implement → Verify with persistent memory and feedback replay.
+argument-hint: <task description>
 ---
 
-## Phase 1 — Research
+# /develop $ARGUMENTS
 
-Before writing any code:
+## 1. Research
+- If $ARGUMENTS is ambiguous, present 2–3 interpretations and confirm before proceeding.
+- Read relevant files; map what already exists (Grep/Glob).
+- Run `memory_search("$ARGUMENTS")` AND `memory_search("feedback")` (replay prior corrections).
+- List assumptions explicitly. Define verifiable, concrete success criteria.
 
-1. Understand the request fully. If ambiguous, present 2–3 interpretations and confirm which.
-2. Read relevant files. Map what already exists. Use Grep/Glob to find related code.
-3. Search memory for prior decisions: `memory_search("$ARGUMENTS")`
-4. List assumptions explicitly. State them before proceeding.
-5. Define success criteria — verifiable, concrete, testable.
+## 2. Feasibility — proceed only if total ≥ 35/50
+| Dim | /10 | Notes |
+|---|---|---|
+| Scope clarity | | well-defined? |
+| Pattern familiarity | | similar code here? |
+| Dependency awareness | | what does it touch? |
+| Edge cases | | failure modes understood? |
+| Test strategy | | how to verify? |
 
-Do not proceed until assumptions are confirmed and success criteria are clear.
+If < 35: return to Research and resolve gaps before planning.
 
----
+## 3. Plan — block on user approval
+Goal (one sentence) · Files to **modify** (with reason) · Files to **create** (with reason) · Steps (numbered, each independently completable) · Risks · Mitigations.
 
-## Phase 2 — Plan
+## 4. Implement
+One step at a time. Verify after each unit. Touch only what's in the plan — no opportunistic refactors. If blocked or plan changes: stop and report, don't improvise.
 
-Present a concise plan:
-
-- **Goal**: one sentence
-- **Files to modify**: list with reason
-- **Files to create**: list with reason
-- **Steps**: numbered, each independently completable
-- **Risks**: what could go wrong
-- **Mitigations**: how to handle each risk
-
-Wait for explicit approval before proceeding to implementation.
-If the plan changes during implementation, return to this phase.
-
----
-
-## Phase 3 — Implement
-
-- One step at a time.
-- Run tests or verify output after each logical unit.
-- Checkpoint every 5 edits: "Checkpoint [N/total]: [what done]. [what next]."
-- Touch only what's in the plan. No opportunistic refactors.
-- If blocked or plan is wrong: stop and report, don't guess.
-
----
-
-## Phase 4 — Verify
-
-Self-review before reporting done:
-
-1. Read the diff. Does it match the plan?
-2. Verify each success criterion is met.
-3. Check for regressions in adjacent code.
-4. Run /review if changes are significant.
-
-Store key decisions: `memory_store("decision", "[what was decided and why]", ["$ARGUMENTS"])`
-
-Report: "Done. [one-line summary]. [any open questions]."
+## 5. Verify
+Read diff vs plan · check each success criterion · scan adjacent code for regressions · run `/review` if changes are significant. Store key decisions: `memory_store("decision", "what + why", ["$ARGUMENTS"])`.

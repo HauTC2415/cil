@@ -40,6 +40,16 @@
           }
         ]
       }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cil hook user-prompt-submit"
+          }
+        ]
+      }
     ]
   }
 }

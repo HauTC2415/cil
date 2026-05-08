@@ -122,9 +122,12 @@ export function storeSession(id: string, snapshot: string, dbPath?: string): voi
 
 export function getLatestSession(dbPath?: string): SessionSnapshot | null {
   const db = getDb(dbPath);
-  return db.prepare(`
+  // better-sqlite3 .get() returns undefined when no rows; coerce to null
+  // to match declared return type.
+  const row = db.prepare(`
     SELECT * FROM sessions ORDER BY created_at DESC LIMIT 1
-  `).get() as SessionSnapshot | null;
+  `).get() as SessionSnapshot | undefined;
+  return row ?? null;
 }
 
 export function storeActivity(
@@ -138,6 +141,70 @@ export function storeActivity(
     INSERT INTO activity (session_id, event_type, content, created_at)
     VALUES (?, ?, ?, ?)
   `).run(sessionId, eventType, content, Date.now());
+}
+
+// Pull recent activity rows for use as a relevance signal (e.g. before
+// compaction). Only returns content text — caller decides how to tokenize.
+export function getRecentActivityText(
+  limit = 30,
+  hoursBack = 6,
+  dbPath?: string,
+): string[] {
+  const db = getDb(dbPath);
+  const since = Date.now() - hoursBack * 3_600_000;
+  const rows = db
+    .prepare(
+      `SELECT content FROM activity
+       WHERE created_at > ?
+       ORDER BY created_at DESC
+       LIMIT ?`,
+    )
+    .all(since, limit) as Array<{ content: string }>;
+  return rows.map((r) => r.content);
+}
+
+// Count consecutive `tool_error` events at the end of a session's activity
+// stream. Stops at the first non-error event. Used by the PostToolUse hook
+// to detect debug loops and warn Claude/user before context bloats further.
+export function getConsecutiveErrorCount(sessionId: string, dbPath?: string): number {
+  const db = getDb(dbPath);
+  const rows = db
+    .prepare(
+      `SELECT event_type FROM activity
+       WHERE session_id = ?
+       ORDER BY id DESC
+       LIMIT 50`,
+    )
+    .all(sessionId) as Array<{ event_type: string }>;
+
+  let count = 0;
+  for (const row of rows) {
+    if (row.event_type === 'tool_error') {
+      count++;
+    } else {
+      break;
+    }
+  }
+  return count;
+}
+
+// Returns true if the given marker event has already been recorded for this
+// session. Used to make threshold-based warnings fire at most once per
+// session (e.g. context-size warning, error-loop warning at count=3).
+export function hasSessionMarker(sessionId: string, marker: string, dbPath?: string): boolean {
+  const db = getDb(dbPath);
+  const row = db
+    .prepare(
+      `SELECT 1 FROM activity
+       WHERE session_id = ? AND event_type = ? AND content = ?
+       LIMIT 1`,
+    )
+    .get(sessionId, '__marker__', marker) as { 1: number } | undefined;
+  return row !== undefined;
+}
+
+export function setSessionMarker(sessionId: string, marker: string, dbPath?: string): void {
+  storeActivity(sessionId, '__marker__', marker, dbPath);
 }
 
 export function closeDb(): void {

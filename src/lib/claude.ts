@@ -51,10 +51,11 @@ export function configureHooks(settingsPath: string): void {
 
   type HookDef = { matcher?: string; command: string };
   const hookDefs: Record<string, HookDef> = {
-    PreToolUse:  { matcher: 'Bash', command: 'cil hook pre-tool-use' },
-    PostToolUse: { command: 'cil hook post-tool-use' },
-    PreCompact:  { command: 'cil hook pre-compact' },
-    Stop:        { command: 'cil hook session-stop' },
+    PreToolUse:        { matcher: 'Bash', command: 'cil hook pre-tool-use' },
+    PostToolUse:       { command: 'cil hook post-tool-use' },
+    PreCompact:        { command: 'cil hook pre-compact' },
+    Stop:              { command: 'cil hook session-stop' },
+    UserPromptSubmit:  { command: 'cil hook user-prompt-submit' },
   };
 
   for (const [event, def] of Object.entries(hookDefs)) {

@@ -7,6 +7,9 @@ import { retrieveCommand } from './commands/retrieve.js';
 import { resetCommand } from './commands/reset.js';
 import { hookCommand } from './commands/hook.js';
 import { compressCommand } from './commands/compress.js';
+import { exportCommand } from './commands/export.js';
+import { importCommand } from './commands/import.js';
+import { pruneCommand } from './commands/prune.js';
 
 const program = new Command();
 
@@ -53,9 +56,37 @@ program
 
 program
   .command('compress')
-  .description('Compress stdin output (RTK-style: filter, group, truncate, deduplicate)')
+  .description('Compress stdin output (modes: lite=filter only, full=4 pillars, ultra=+semantic dedup)')
   .option('-n, --lines <n>', 'Max output lines', '150')
-  .action((options) => compressCommand({ lines: parseInt(options.lines, 10) }));
+  .option('-m, --mode <mode>', 'Compression intensity: lite | full | ultra', 'full')
+  .action((options) =>
+    compressCommand({ lines: parseInt(options.lines, 10), mode: options.mode }),
+  );
+
+program
+  .command('export')
+  .description('Export memory + sessions as JSON (stdout, or --out file)')
+  .option('-o, --out <file>', 'Write to file instead of stdout')
+  .action((options) => exportCommand({ out: options.out }));
+
+program
+  .command('import <file>')
+  .description('Import a JSON export — duplicates skipped by content hash')
+  .action((file: string) => importCommand(file));
+
+program
+  .command('prune')
+  .description('Delete memory entries older than a duration')
+  .option('--older-than <duration>', 'Threshold (e.g. 30d, 6mo, 1y)', '90d')
+  .option('--dry-run', 'Show count without deleting', false)
+  .option('-c, --category <cat>', 'Limit to a single category')
+  .action((options) =>
+    pruneCommand({
+      olderThan: options.olderThan,
+      dryRun: options.dryRun,
+      category: options.category,
+    }),
+  );
 
 // Internal command used by Claude Code hooks — not shown in help
 program

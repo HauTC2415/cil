@@ -10,6 +10,8 @@ import { compressCommand } from './commands/compress.js';
 import { exportCommand } from './commands/export.js';
 import { importCommand } from './commands/import.js';
 import { pruneCommand } from './commands/prune.js';
+import { uninstallCommand } from './commands/uninstall.js';
+import { upgradeCommand } from './commands/upgrade.js';
 
 const program = new Command();
 
@@ -86,6 +88,24 @@ program
       dryRun: options.dryRun,
       category: options.category,
     }),
+  );
+
+program
+  .command('uninstall')
+  .description('Remove CIL templates, hooks, and MCP registration from the current project')
+  .option('-g, --global', 'Uninstall global (~/.claude/commands/) install', false)
+  .option('--purge', 'Also delete ~/.cil/ memory database', false)
+  .action((options) =>
+    uninstallCommand({ global: options.global, purge: options.purge }),
+  );
+
+program
+  .command('upgrade')
+  .description('Refresh slash commands, skills, and agents from the current CIL templates')
+  .option('-g, --global', 'Upgrade the global install', false)
+  .option('--check', 'Show which files would change without applying', false)
+  .action((options) =>
+    upgradeCommand({ global: options.global, check: options.check }),
   );
 
 // Internal command used by Claude Code hooks — not shown in help

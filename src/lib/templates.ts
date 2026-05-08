@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { getTemplatesDir } from './paths.js';
+import { getTemplatesDir, getClaudeCommandsDir } from './paths.js';
 
 export function installCLAUDEMD(targetDir: string): void {
   const src = path.join(getTemplatesDir(), 'claude', 'CLAUDE.md');
@@ -69,4 +69,37 @@ export function listSkills(): string[] {
   return fs.readdirSync(srcDir, { withFileTypes: true })
     .filter((e) => e.isDirectory())
     .map((e) => e.name);
+}
+
+export interface InstalledFiles {
+  workflows: string[]; // absolute paths to .md files cil init would create
+  skills: string[];    // absolute paths to skill directories
+  agents: string[];    // absolute paths to agent .md files
+}
+
+// Return the exact paths cil init creates, computed from the templates/
+// directory shipped with this CIL version. Used by uninstall and update so
+// they only touch files CIL owns — never user-authored ones.
+export function listInstalledFiles(
+  scope: 'global' | 'local',
+  projectDir: string,
+): InstalledFiles {
+  const commandsDir = getClaudeCommandsDir(scope, projectDir);
+  const skillsDir = path.join(projectDir, '.claude', 'skills');
+  const agentsDir = path.join(projectDir, '.claude', 'agents');
+  const templatesDir = getTemplatesDir();
+
+  const workflowFiles = fs.readdirSync(path.join(templatesDir, 'workflows'))
+    .filter((f) => f.endsWith('.md'));
+  const skillNames = fs.readdirSync(path.join(templatesDir, 'skills'), { withFileTypes: true })
+    .filter((e) => e.isDirectory())
+    .map((e) => e.name);
+  const agentFiles = fs.readdirSync(path.join(templatesDir, 'agents'))
+    .filter((f) => f.endsWith('.md'));
+
+  return {
+    workflows: workflowFiles.map((f) => path.join(commandsDir, f)),
+    skills: skillNames.map((n) => path.join(skillsDir, n)),
+    agents: agentFiles.map((f) => path.join(agentsDir, f)),
+  };
 }

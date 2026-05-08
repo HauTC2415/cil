@@ -119,3 +119,78 @@ export function ensureCommandsDir(scope: 'global' | 'local', projectDir?: string
   fs.mkdirSync(dir, { recursive: true });
   return dir;
 }
+
+// Inverse of configureHooks. Removes only hook entries whose command starts
+// with "cil hook" — leaves any other hooks the user has configured intact.
+// Returns the count of hook entries removed.
+export function unconfigureHooks(settingsPath: string): number {
+  if (!fs.existsSync(settingsPath)) return 0;
+  const settings = readSettings(settingsPath);
+  if (!settings.hooks) return 0;
+
+  let removed = 0;
+  for (const event of Object.keys(settings.hooks)) {
+    const entries = settings.hooks[event] ?? [];
+    const cleaned: HookEntry[] = [];
+    for (const entry of entries) {
+      const filteredHooks = (entry.hooks ?? []).filter((h) => !h.command?.startsWith('cil hook'));
+      const removedThisEntry = (entry.hooks?.length ?? 0) - filteredHooks.length;
+      removed += removedThisEntry;
+      if (filteredHooks.length > 0) {
+        cleaned.push({ ...entry, hooks: filteredHooks });
+      }
+    }
+    if (cleaned.length === 0) {
+      delete settings.hooks[event];
+    } else {
+      settings.hooks[event] = cleaned;
+    }
+  }
+
+  if (Object.keys(settings.hooks).length === 0) {
+    delete settings.hooks;
+  }
+
+  writeSettings(settingsPath, settings);
+  return removed;
+}
+
+// Inverse of configureMCP. Tries `claude mcp remove cil` first, falls back to
+// directly editing claude_desktop_config.json. Returns true if the entry was
+// either removed or didn't exist.
+export function unconfigureMCP(): boolean {
+  try {
+    execSync('claude mcp remove cil', { stdio: 'pipe' });
+    return true;
+  } catch {
+    return unconfigureMCPManual();
+  }
+}
+
+function unconfigureMCPManual(): boolean {
+  const claudeHome = getClaudeHome();
+  const configPath = path.join(claudeHome, 'claude_desktop_config.json');
+  if (!fs.existsSync(configPath)) return true; // nothing to remove
+
+  let config: Record<string, unknown>;
+  try {
+    config = JSON.parse(fs.readFileSync(configPath, 'utf-8')) as Record<string, unknown>;
+  } catch {
+    return false;
+  }
+
+  const servers = config['mcpServers'] as Record<string, unknown> | undefined;
+  if (!servers || !servers['cil']) return true;
+
+  delete servers['cil'];
+  if (Object.keys(servers).length === 0) {
+    delete config['mcpServers'];
+  }
+
+  try {
+    fs.writeFileSync(configPath, JSON.stringify(config, null, 2) + '\n', 'utf-8');
+    return true;
+  } catch {
+    return false;
+  }
+}

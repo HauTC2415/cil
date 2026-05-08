@@ -1,9 +1,18 @@
-import { compress } from '../lib/compress.js';
+import { compress, type CompressionMode } from '../lib/compress.js';
 
-export async function compressCommand(options: { lines: number }): Promise<void> {
+interface CompressOptions {
+  lines: number;
+  mode: CompressionMode;
+}
+
+const VALID_MODES: CompressionMode[] = ['lite', 'full', 'ultra'];
+
+export async function compressCommand(options: CompressOptions): Promise<void> {
   const raw = await readStdin();
   if (!raw.trim()) return;
-  process.stdout.write(compress(raw, options.lines));
+
+  const mode: CompressionMode = VALID_MODES.includes(options.mode) ? options.mode : 'full';
+  process.stdout.write(compress(raw, options.lines, mode));
 }
 
 function readStdin(): Promise<string> {

@@ -16,7 +16,7 @@ cil init
 This installs:
 - `CLAUDE.md` with engineering principles
 - `.claude/commands/` with `/develop`, `/review`, `/commit`, `/wrap-up`, `/learn`, `/retrieve`
-- `.cil/skills/` and `.cil/agents/`
+- `.claude/skills/<name>/SKILL.md` and `.claude/agents/<name>.md` (both auto-discovered by Claude Code)
 - Claude Code hooks for session continuity
 - CIL MCP server for persistent memory
 

@@ -10,6 +10,11 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc -w",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "sync-templates": "node scripts/sync-templates.mjs",
+    "sync-templates:apply": "node scripts/sync-templates.mjs --apply",
+    "benchmark": "npm run build && node scripts/benchmark.mjs",
     "prepublishOnly": "npm run build",
     "start:mcp": "node dist/mcp/index.js"
   },
@@ -54,7 +59,8 @@
     "@types/better-sqlite3": "^7.6.13",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^20.14.0",
-    "typescript": "^5.5.0"
+    "typescript": "^5.5.0",
+    "vitest": "^2.1.9"
   },
   "engines": {
     "node": ">=20"

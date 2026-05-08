@@ -1,3 +1,8 @@
+---
+name: debugging
+description: Use when investigating a bug, regression, or unexpected behavior. Enforces reproduce → isolate → hypothesize → verify → fix → prevent — fixing root causes rather than symptoms, and adding a regression test before closing.
+---
+
 # Skill: Debugging
 
 Root cause analysis. Fix causes, not symptoms.

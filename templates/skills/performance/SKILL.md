@@ -1,3 +1,8 @@
+---
+name: performance
+description: Use when investigating slowness, planning optimizations, or reviewing a hot path. Enforces "measure first" — profile before optimizing, fix algorithm before I/O, never add caches before fixing the underlying query. Covers DB indexing, N+1, and request-path I/O hygiene.
+---
+
 # Skill: Performance
 
 Measure first. Optimize the right thing.

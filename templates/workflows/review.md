@@ -1,3 +1,8 @@
+---
+description: Review the working diff (unstaged + staged) against a correctness, regressions, security, performance, and style checklist.
+allowed-tools: Bash(git diff:*), Bash(git status:*), Read, Grep, Glob
+---
+
 # /review
 
 Review current changes for correctness, regressions, and quality.

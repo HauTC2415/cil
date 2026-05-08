@@ -1,3 +1,7 @@
+---
+description: End-of-session protocol — capture decisions, constraints, learnings, and next-session task; create a session snapshot before context is lost.
+---
+
 # /wrap-up
 
 End-of-session protocol. Capture learnings before context is lost.
@@ -24,6 +28,9 @@ Store each learning:
 ```
 memory_store("learning", "[the insight]", ["relevant", "tags"])
 ```
+
+**What to store:** decisions, constraints, architecture facts, discovered limitations, patterns that worked.
+**Do NOT store:** build errors, compile warnings, temporary bugs fixed during the session, tool output logs.
 
 ---
 

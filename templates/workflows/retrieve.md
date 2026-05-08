@@ -1,3 +1,8 @@
+---
+description: Full-text search persistent memory (BM25) and present results grouped by category — decisions, constraints, learnings, tasks.
+argument-hint: <search query>
+---
+
 # /retrieve
 
 Arguments: $ARGUMENTS

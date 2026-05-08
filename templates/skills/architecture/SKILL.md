@@ -1,3 +1,8 @@
+---
+name: architecture
+description: Use when making structural decisions, choosing service boundaries, evaluating coupling/cohesion, or deciding whether to add a new component. Helps reason about dependency direction (domain ← application ← infrastructure) and avoid distributed monoliths or premature abstractions.
+---
+
 # Skill: Architecture
 
 Service boundaries and structural decisions.

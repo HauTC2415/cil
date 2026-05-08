@@ -1,3 +1,8 @@
+---
+description: Generate a conventional commit message for staged changes (feat/fix/refactor/...) and run git commit. Refuses if sensitive files are staged.
+allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git commit:*), Bash(git log:*)
+---
+
 # /commit
 
 Generate and run a commit for staged changes.

@@ -1,3 +1,8 @@
+---
+name: testing
+description: Use when writing or reviewing tests — choosing what to test, structuring test suites, deciding on real deps vs mocks, or after fixing a bug (regression test). Emphasizes testing behavior over implementation and progressing boundary → happy path → edge cases → errors.
+---
+
 # Skill: Testing
 
 Validate behavior, not implementation.

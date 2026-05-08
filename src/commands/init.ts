@@ -79,7 +79,22 @@ export async function initCommand(options: InitOptions): Promise<void> {
   try {
     installSkills(projectDir);
     installAgents(projectDir);
-    skillsSpinner.succeed(`Skills & agents → ${projectDir}/.cil/`);
+    skillsSpinner.succeed(`Skills → .claude/skills/  ·  Agents → .claude/agents/`);
+
+    // Warn about stale templates from earlier CIL versions (pre-native layout)
+    const legacy = [
+      path.join(projectDir, '.cil', 'skills'),
+      path.join(projectDir, '.cil', 'agents'),
+    ].filter((p) => fs.existsSync(p));
+    if (legacy.length > 0) {
+      console.log(
+        chalk.yellow(
+          `  ⚠ Found legacy CIL templates: ${legacy.map((p) => path.relative(projectDir, p)).join(', ')}\n` +
+          `    Claude Code now reads .claude/skills/<name>/SKILL.md and .claude/agents/<name>.md.\n` +
+          `    Safe to remove: rm -rf .cil/skills .cil/agents`,
+        ),
+      );
+    }
   } catch (err) {
     skillsSpinner.fail(`Skills install failed: ${String(err)}`);
   }

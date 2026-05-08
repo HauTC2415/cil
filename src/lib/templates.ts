@@ -28,25 +28,32 @@ export function installWorkflows(commandsDir: string): void {
   }
 }
 
+// Skills follow Claude Code's native layout: .claude/skills/<name>/SKILL.md
+// so Claude Code can auto-discover them from frontmatter.
 export function installSkills(targetDir: string): void {
   const srcDir = path.join(getTemplatesDir(), 'skills');
-  const destDir = path.join(targetDir, '.cil', 'skills');
+  const destDir = path.join(targetDir, '.claude', 'skills');
   copyDir(srcDir, destDir);
 }
 
+// Agents follow Claude Code's native layout: .claude/agents/<name>.md (flat).
+// Frontmatter (name + description) lets the Agent tool auto-route by intent.
 export function installAgents(targetDir: string): void {
   const srcDir = path.join(getTemplatesDir(), 'agents');
-  const destDir = path.join(targetDir, '.cil', 'agents');
+  const destDir = path.join(targetDir, '.claude', 'agents');
   copyDir(srcDir, destDir);
 }
 
 function copyDir(src: string, dest: string): void {
   fs.mkdirSync(dest, { recursive: true });
-  const files = fs.readdirSync(src);
-  for (const file of files) {
-    const srcPath = path.join(src, file);
-    const destPath = path.join(dest, file);
-    fs.copyFileSync(srcPath, destPath);
+  for (const entry of fs.readdirSync(src, { withFileTypes: true })) {
+    const srcPath = path.join(src, entry.name);
+    const destPath = path.join(dest, entry.name);
+    if (entry.isDirectory()) {
+      copyDir(srcPath, destPath);
+    } else {
+      fs.copyFileSync(srcPath, destPath);
+    }
   }
 }
 
@@ -59,7 +66,7 @@ export function listWorkflows(): string[] {
 
 export function listSkills(): string[] {
   const srcDir = path.join(getTemplatesDir(), 'skills');
-  return fs.readdirSync(srcDir)
-    .filter((f) => f.endsWith('.md'))
-    .map((f) => f.replace('.md', ''));
+  return fs.readdirSync(srcDir, { withFileTypes: true })
+    .filter((e) => e.isDirectory())
+    .map((e) => e.name);
 }

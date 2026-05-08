@@ -1,3 +1,7 @@
+---
+description: End-of-session protocol — capture decisions, constraints, learnings, and next-session task; create a session snapshot before context is lost.
+---
+
 # /wrap-up
 
 End-of-session protocol. Capture learnings before context is lost.

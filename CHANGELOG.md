@@ -7,6 +7,19 @@ Versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ---
 
+## [2.1.0] — 2026-05-12
+
+### Added
+
+- `cil upgrade` now checks the npm registry for newer versions and automatically runs `npm install -g @hautc.it/cil@latest` when an update is available — no manual reinstall needed
+- `cil upgrade --check` previews both the npm update and template diff without applying either
+
+### Changed
+
+- README fully updated: added Skills section (api-design, migration), Hooks section documenting all 5 hooks including Correction Memory (UserPromptSubmit), full CLI Reference with `cil upgrade`, `cil uninstall`, and all command flags
+
+---
+
 ## [2.0.1] — 2026-05-12
 
 ### Fixed

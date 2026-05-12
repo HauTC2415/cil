@@ -54,9 +54,9 @@ claude
 |---|---|---|
 | `CLAUDE.md` | `./CLAUDE.md` | Engineering principles, auto-loaded by Claude Code |
 | Slash commands | `./.claude/commands/` | `/spec` `/develop` `/test` `/review` `/commit` `/wrap-up` `/learn` `/retrieve` |
-| Skills | `./.claude/skills/<name>/SKILL.md` | Debugging, testing, architecture, performance — auto-loaded by Claude Code via frontmatter |
+| Skills | `./.claude/skills/<name>/SKILL.md` | Debugging, testing, architecture, performance, API design, database migration — auto-loaded by Claude Code via frontmatter |
 | Agents | `./.claude/agents/<name>.md` | Researcher, planner, implementer, reviewer — auto-routed by Claude Code's Agent tool via frontmatter |
-| Hooks | `./.claude/settings.json` | PreToolUse, PostToolUse, PreCompact, Stop |
+| Hooks | `./.claude/settings.json` | PreToolUse, PostToolUse, PreCompact, Stop, UserPromptSubmit |
 | MCP server | `~/.claude.json` (user scope) | Persistent memory tools for Claude |
 | Memory DB | `~/.cil/memory.db` | SQLite FTS5 — shared across all projects |
 
@@ -65,6 +65,11 @@ For global slash commands (available in every project without re-running `cil in
 ```bash
 cil init --global
 ```
+
+**Flags:**
+- `--global` — install slash commands to `~/.claude/commands/` (available across all projects)
+- `--skip-mcp` — skip MCP server registration (useful if registering manually or in CI)
+- `--skip-hooks` — skip writing hook config to `.claude/settings.json`
 
 ---
 
@@ -154,6 +159,21 @@ Installed by `cil init` into `.claude/agents/`, auto-routed by Claude Code's Age
 
 ---
 
+## Skills
+
+Installed by `cil init` into `.claude/skills/`, auto-loaded by Claude Code when their topic is relevant:
+
+| Skill | Use when |
+|---|---|
+| `debugging` | Reproduce a bug → form ranked hypotheses → investigate code paths → propose minimal fix |
+| `testing` | Generate test scaffolds (boundary → happy → edge → error); detect framework from `package.json` |
+| `architecture` | Evaluate design trade-offs, component boundaries, or system evolution decisions |
+| `performance` | Identify and measure bottlenecks (N+1, blocking I/O, cache misses) before optimizing |
+| `api-design` | Design or review a public API surface — REST/GraphQL/gRPC, versioning, idempotency, error contracts, auth boundary |
+| `migration` | Change a database schema or backfill data safely — lock-impact analysis, dual-write transitions, rollback plans before any DDL runs |
+
+---
+
 ## MCP Memory Server
 
 The MCP server runs locally and gives Claude structured, searchable memory that persists across all sessions and projects.
@@ -229,7 +249,23 @@ git log --oneline -50 | cil compress
 
 ---
 
-## Context-Pressure Hooks
+## Hooks
+
+CIL installs five Claude Code hooks that work silently in the background:
+
+| Hook | Event | What it does |
+|---|---|---|
+| `PreToolUse` | Every Bash call | Rewrites the command to pipe output through `cil compress` — keeps tool output token-efficient automatically |
+| `PostToolUse` | After every tool | Error-loop detection + context-size warning (see below) |
+| `PreCompact` | Before `/compact` | Injects relevant memories + last session snapshot into the compacted context so Claude doesn't lose key decisions |
+| `Stop` | Session end | Logs activity to the memory DB for future relevance ranking |
+| `UserPromptSubmit` | Every user message | Detects corrections ("don't do that", "no, instead…") and auto-stores them as `feedback`-tagged memories — replayed at the start of every `/develop` session |
+
+### Correction Memory
+
+When you correct Claude ("stop adding comments", "use tabs not spaces", "don't mock the DB in tests"), the `UserPromptSubmit` hook captures the rule automatically — no `/learn` needed. It is stored as a `learning` memory with the `feedback` tag and replayed at the start of future `/develop` sessions. Medium and high-confidence corrections only; low-confidence phrases are ignored.
+
+### Context-Pressure Signals
 
 Two `PostToolUse` signals push back on the "error → fix → error → fix" loops that bloat context:
 
@@ -252,14 +288,30 @@ Both signals are advisory — Claude still decides what to do. The hook can sugg
 |---|---|
 | `cil init` | Initialize CIL in current project |
 | `cil init --global` | Install slash commands globally (`~/.claude/commands/`) |
+| `cil init --skip-mcp` | Skip MCP server registration |
+| `cil init --skip-hooks` | Skip hook config in `.claude/settings.json` |
 | `cil doctor` | Validate all components |
+| `cil upgrade` | Check npm for new version + sync templates; runs `npm install -g` if update available |
+| `cil upgrade --check` | Preview what would change without applying |
+| `cil upgrade --global` | Upgrade the global install (affects `~/.claude/commands/`) |
+| `cil uninstall` | Remove CIL templates, hooks, and MCP from the current project |
+| `cil uninstall --global` | Remove the global install |
+| `cil uninstall --purge` | Also delete `~/.cil/` memory database |
 | `cil compact` | Print current memory snapshot |
-| `cil retrieve "query"` | Search memory |
-| `cil compress` | Compress stdin (pipe tool) |
+| `cil retrieve "query"` | Full-text search over memory |
+| `cil retrieve -n 20 "query"` | Limit results (default 8) |
+| `cil retrieve -c decision "query"` | Filter by category |
+| `cil compress` | Compress stdin (pipe tool, default `--mode=full`) |
+| `cil compress --mode=ultra` | Add semantic dedup (best for test output) |
+| `cil compress --mode=lite` | Filter ANSI/noise only, no dedup |
+| `cil compress -n 100` | Limit output to 100 lines |
 | `cil export [--out file.json]` | Export memory + sessions as JSON |
 | `cil import <file.json>` | Import a JSON export (deduped by content hash) |
-| `cil prune --older-than=90d [--dry-run]` | Delete memory older than threshold |
+| `cil prune --older-than=90d` | Delete memory older than threshold |
+| `cil prune --older-than=90d --dry-run` | Preview count without deleting |
+| `cil prune --older-than=90d -c task` | Limit prune to one category |
 | `cil reset --db` | Clear memory database |
+| `cil reset --all` | Clear all CIL data |
 
 ---
 

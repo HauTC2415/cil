@@ -1,6 +1,6 @@
 {
   "name": "@hautc.it/cil",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "Claude Intelligence Layer — token-efficient context runtime for Claude Code",
   "type": "module",
   "bin": {

@@ -7,6 +7,23 @@ Versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ---
 
+## [2.2.0] — 2026-05-12
+
+### Added
+
+- **`database-design` skill** — design schemas from scratch: entity modeling, normalization (3NF vs denorm), indexing strategy (composite index order, FTS5/GIN), SQL vs NoSQL decision matrix, schema evolution plan; auto-loaded by Claude Code when the topic is database design
+- **`security` skill** — design-time security guidance covering threat modeling, trust boundaries, auth boundary checklist (authentication, authorization, token lifecycle), input validation strategy, dependency risk assessment, and secret management; complements Claude Code's built-in `/security-review` code scan
+- **`/handoff` workflow** — fast session handover when context is filling up; captures in-progress state (git status, active task, next action) and generates a paste-ready resume command for the next session; lighter than `/wrap-up` (no full audit checklist)
+- **`/onboard` workflow** — structured codebase orientation before modifying unfamiliar code; reads `CLAUDE.md`, maps entry points and test layout, audits conventions, reviews recent git activity, and retrieves prior memory about the project
+
+### Changed
+
+- Improved content in `api-design`, `migration`, and `testing` skills
+- README slash-commands table updated to list all 11 installed workflows (was 8)
+- Removed 3 dead internal exports: `isVerboseCommand`, `CONFIG_PATH`, `listWorkflows`/`listSkills`
+
+---
+
 ## [2.1.0] — 2026-05-12
 
 ### Added

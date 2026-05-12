@@ -4,7 +4,6 @@ import { fileURLToPath } from 'url';
 
 export const CIL_HOME = path.join(os.homedir(), '.cil');
 export const DB_PATH = path.join(CIL_HOME, 'memory.db');
-export const CONFIG_PATH = path.join(CIL_HOME, 'config.json');
 export const HOOK_LOG_PATH = path.join(CIL_HOME, 'hook.log');
 export const HOOK_LOG_MAX_BYTES = 1024 * 1024; // 1 MB rotation threshold
 

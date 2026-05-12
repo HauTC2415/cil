@@ -57,20 +57,6 @@ function copyDir(src: string, dest: string): void {
   }
 }
 
-export function listWorkflows(): string[] {
-  const srcDir = path.join(getTemplatesDir(), 'workflows');
-  return fs.readdirSync(srcDir)
-    .filter((f) => f.endsWith('.md'))
-    .map((f) => '/' + f.replace('.md', ''));
-}
-
-export function listSkills(): string[] {
-  const srcDir = path.join(getTemplatesDir(), 'skills');
-  return fs.readdirSync(srcDir, { withFileTypes: true })
-    .filter((e) => e.isDirectory())
-    .map((e) => e.name);
-}
-
 export interface InstalledFiles {
   workflows: string[]; // absolute paths to .md files cil init would create
   skills: string[];    // absolute paths to skill directories

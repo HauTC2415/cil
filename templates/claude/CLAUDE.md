@@ -55,7 +55,8 @@ CIL implements all four. Reach for them in this order:
 | Before committing | `/review` |
 | Ready to commit | `/commit` |
 | Cut a release (bump version, regenerate CHANGELOG) | `/release` |
-| Context filling up or session ending | `/wrap-up` |
+| Context filling up — quick handover | `/handoff` |
+| Session ending — thorough closeout | `/wrap-up` |
 | Recall past decisions | `/retrieve <query>` |
 | Save a specific insight | `/learn <insight>` |
 
@@ -63,7 +64,7 @@ Typical flow: `/spec → /develop → /test → /review → /commit → /wrap-up
 
 For security audit and code simplification, use Claude Code's built-in `security-review` and `simplify` skills — CIL does not duplicate these.
 
-Run `/wrap-up` proactively — don't wait until context is full.
+Run `/handoff` when context is filling up. Run `/wrap-up` at end of session for thorough closeout.
 
 # Memory
 

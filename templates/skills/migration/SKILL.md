@@ -7,6 +7,31 @@ description: Use when changing a database schema or backfilling data in producti
 
 A migration is a deploy event, not a code change. Reason about it that way.
 
+## Project Context
+
+### Existing project
+
+1. **Read `CLAUDE.md`** — migration rules, DB constraints, or deploy-window requirements take priority.
+2. **Identify the database and migration tool** — read existing migration files to understand the naming convention, file structure, and execution mechanism already in use.
+3. **Check data volume** — how many rows are in the affected table? This determines whether the migration is instant or requires a maintenance window and special handling.
+4. **Read existing migration patterns** — how does this project handle rollbacks? Are down migrations written? Are backfills done inside the migration or via a separate script?
+5. **Search memory** — `memory_search("migration [table] schema")` — retrieve prior decisions, known lock patterns, or constraints on this table.
+6. Apply the checklist and patterns below within the project's established approach.
+
+### Greenfield project
+
+No schema exists yet — foundational choices here are expensive to undo:
+
+1. **Choose the migration tool** — use the standard one for the platform and ORM in use. Prefer a dedicated migration tool over raw SQL files; it gives you history, ordering, and reproducibility.
+2. **Establish file naming convention** — timestamp prefix (`YYYYMMDDHHMMSS_description`) is safer than sequential numbers for teams working on parallel branches.
+3. **Add audit columns from day one** — `created_at`, `updated_at` (and `deleted_at` if soft-delete is needed) on every table. Retrofitting these later requires locking every table.
+4. **Decide rollback strategy upfront** — write down migrations from day one, or explicitly document that the project uses forward-only migrations. Changing this policy later is disruptive.
+5. **Set the backfill standard** — batched (small chunks), idempotent (safe to re-run), throttled (leave headroom for live traffic). Write this into `CLAUDE.md`.
+6. **Store the decision:**
+   ```
+   memory_store("decision", "migrations: tool=[x], naming=[timestamp], rollback=[x], audit cols=created_at+updated_at", ["migration", "database", "conventions"])
+   ```
+
 ## Pre-flight checklist
 
 Before running any DDL:

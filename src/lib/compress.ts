@@ -55,11 +55,6 @@ const SAFE_NO_COMPRESS = [
   /^false\s*$/,
 ];
 
-export function isVerboseCommand(command: string): boolean {
-  const t = command.trim();
-  return ULTRA_PATTERNS.some((p) => p.test(t)) || FULL_PATTERNS.some((p) => p.test(t));
-}
-
 // Choose compression mode for a Bash command. Returns 'skip' for trivial
 // commands that shouldn't be wrapped at all, otherwise the appropriate mode.
 // Default for any unknown command is 'lite' — safe (only filters ANSI/noise),

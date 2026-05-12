@@ -7,7 +7,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D20-brightgreen)](https://nodejs.org)
 
-CIL transforms Claude Code into a context-aware, token-efficient engineering system by combining the best ideas from [context-mode](https://github.com/mksglu/context-mode), [pro-workflow](https://github.com/rohitg00/pro-workflow), [caveman](https://github.com/JuliusBrussee/caveman), [RTK](https://github.com/rtk-ai/rtk), and [Andrej Karpathy Skills](https://github.com/forrestchang/andrej-karpathy-skills).
+CIL gives Claude Code **persistent memory**, **automatic output compression**, and **structured workflows** — so context survives across sessions and token usage stays predictable. Inspired by [context-mode](https://github.com/mksglu/context-mode), [pro-workflow](https://github.com/rohitg00/pro-workflow), [caveman](https://github.com/JuliusBrussee/caveman), [RTK](https://github.com/rtk-ai/rtk), and [Andrej Karpathy Skills](https://github.com/forrestchang/andrej-karpathy-skills).
 
 ---
 
@@ -53,8 +53,8 @@ claude
 | What | Where | Purpose |
 |---|---|---|
 | `CLAUDE.md` | `./CLAUDE.md` | Engineering principles, auto-loaded by Claude Code |
-| Slash commands | `./.claude/commands/` | `/spec` `/develop` `/test` `/review` `/commit` `/wrap-up` `/learn` `/retrieve` |
-| Skills | `./.claude/skills/<name>/SKILL.md` | Debugging, testing, architecture, performance, API design, database migration — auto-loaded by Claude Code via frontmatter |
+| Slash commands | `./.claude/commands/` | `/spec` `/develop` `/test` `/review` `/commit` `/wrap-up` `/learn` `/retrieve` `/auto-setup` `/handoff` `/onboard` |
+| Skills | `./.claude/skills/<name>/SKILL.md` | Debugging, testing, architecture, performance, API design, database migration, security design, database design — auto-loaded by Claude Code via frontmatter |
 | Agents | `./.claude/agents/<name>.md` | Researcher, planner, implementer, reviewer — auto-routed by Claude Code's Agent tool via frontmatter |
 | Hooks | `./.claude/settings.json` | PreToolUse, PostToolUse, PreCompact, Stop, UserPromptSubmit |
 | MCP server | `~/.claude.json` (user scope) | Persistent memory tools for Claude |
@@ -143,6 +143,22 @@ Inspects the project root for `package.json` / `pyproject.toml` / `Cargo.toml` /
 /auto-setup
 ```
 
+### `/handoff`
+
+Fast session handover — produces a paste-ready resume command for the next session. Use when context is filling up and you want to preserve state before `/compact`. Lighter than `/wrap-up` (no full audit checklist); output-focused.
+
+```
+/handoff
+```
+
+### `/onboard`
+
+Structured codebase orientation before making changes to an unfamiliar project. Maps entry points, conventions, recent git activity, and retrieves prior memory about the project. Run this on any repo you haven't touched before (or haven't touched in a while).
+
+```
+/onboard
+```
+
 ---
 
 ## Agents
@@ -171,6 +187,8 @@ Installed by `cil init` into `.claude/skills/`, auto-loaded by Claude Code when 
 | `performance` | Identify and measure bottlenecks (N+1, blocking I/O, cache misses) before optimizing |
 | `api-design` | Design or review a public API surface — REST/GraphQL/gRPC, versioning, idempotency, error contracts, auth boundary |
 | `migration` | Change a database schema or backfill data safely — lock-impact analysis, dual-write transitions, rollback plans before any DDL runs |
+| `security` | Threat modeling, trust boundaries, auth design, input validation, secret management, dependency risk — design-time security decisions (complements Claude Code's built-in `/security-review`) |
+| `database-design` | Design a schema from scratch — entity modeling, normalization, indexing strategy, SQL vs NoSQL decision, schema evolution plan |
 
 ---
 
@@ -333,6 +351,92 @@ Session 2 (new day)
         └── memory_search("auth") → retrieves prior decisions
         └── Claude knows JWT choice, 1h expiry constraint
         └── no re-explanation needed
+```
+
+---
+
+## Usage Flows
+
+Real end-to-end scenarios showing how to get the most out of CIL.
+
+### Starting a new feature
+
+```
+/spec add user notifications via email     # capture acceptance criteria
+/develop implement email notifications     # research → plan → implement → verify
+/test src/lib/email.ts                     # generate test scaffold
+/review                                    # systematic checklist
+/commit                                    # conventional commit message
+```
+
+### Entering an unfamiliar codebase
+
+```
+/onboard                    # map project, read conventions, retrieve prior memory
+/develop fix the bug        # now you know the codebase — proceed with context
+```
+
+### Context filling up mid-task
+
+```
+/handoff                    # capture state, produce resume command
+/compact                    # PreCompact hook injects your snapshot automatically
+# ── next session ──
+# paste the resume command Claude produced in /handoff
+```
+
+### End of work session (thorough closeout)
+
+```
+/review                     # check your work
+/commit                     # commit with conventional message
+/wrap-up                    # capture decisions, constraints, learnings → memory
+```
+
+### Recalling past decisions
+
+```
+/retrieve auth decisions
+/retrieve database schema constraints
+/retrieve why we chose X
+```
+
+### Designing a new system
+
+```
+/spec new payment processing feature
+# Claude activates database-design skill for schema,
+# api-design skill for endpoints, security skill for auth boundary
+/develop implement payment processing
+/test src/lib/payment.ts
+/review
+/commit
+```
+
+### Security review before shipping
+
+```
+/review                     # CIL security skill: threat model, input validation, secrets
+# also run Claude Code's built-in:
+/security-review            # code-level vulnerability scan
+```
+
+### Full project lifecycle
+
+```
+# Feature loop:
+/spec → /develop → /test → /review → /commit
+
+# Session management:
+/handoff                    # when context is filling up
+/wrap-up                    # at end of session
+
+# Next session:
+/retrieve [topic]           # recall prior decisions before starting
+/onboard                    # if returning after a long absence
+
+# Releasing:
+/release                    # bump version, update CHANGELOG, push tag
 ```
 
 ---

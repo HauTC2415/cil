@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { compress, isVerboseCommand, selectMode } from '../compress.js';
+import { compress, selectMode } from '../compress.js';
 
 function stripAnnotation(s: string): string {
   return s.replace(/\n*\[compressed \d+% — \d+ → \d+ lines\]$/, '');
@@ -33,23 +33,6 @@ describe('selectMode', () => {
     ['terraform plan', 'lite'],
   ])('%s -> %s', (cmd, expected) => {
     expect(selectMode(cmd)).toBe(expected);
-  });
-});
-
-describe('isVerboseCommand', () => {
-  it.each([
-    ['git diff', true],
-    ['git log --oneline', true],
-    ['npm install', true],
-    ['npm test', true],
-    ['pytest tests/', true],
-    ['cargo build', true],
-    ['ls -la', true],
-    ['echo hello', false],
-    ['cd src', false],
-    ['mkdir foo', false],
-  ])('%s -> %s', (cmd, expected) => {
-    expect(isVerboseCommand(cmd)).toBe(expected);
   });
 });
 

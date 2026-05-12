@@ -7,6 +7,33 @@ description: Use when designing or reviewing a public API surface — REST/Graph
 
 A public contract is forever. Cheap to add a field; impossible to remove one.
 
+## Project Context
+
+### Existing project
+
+1. **Read `CLAUDE.md`** — API conventions, versioning rules, or auth patterns already decided take priority.
+2. **Check existing routes** — read 2–3 existing endpoints. Match their URL structure, naming convention, HTTP method usage, and response envelope shape.
+3. **Find the error format** — search for existing error responses. Use the exact same shape — never introduce a second error schema.
+4. **Check auth middleware** — how is authentication done in existing routes? Apply the same pattern (middleware, guard, decorator) — don't invent a new one.
+5. **Check pagination** — does the project already use cursor or offset pagination? Don't mix styles.
+6. **Search memory** — `memory_search("api design [resource] convention")` — retrieve prior decisions on versioning, naming, or error format.
+7. Consistency with the established contract beats theoretical perfection.
+
+### Greenfield project
+
+No API exists yet — you are setting the contract others will depend on:
+
+1. **Choose transport** — use the Decision table below. Default to REST unless there's a concrete reason not to.
+2. **Define the error shape once** — write it down before the first endpoint. Every endpoint returns this exact shape — no exceptions.
+3. **Set versioning strategy** — pick one approach (URL prefix, header, or media type) and document it in `CLAUDE.md`. Don't let each endpoint invent its own.
+4. **Decide auth approach** — stateless token, session, or API key. Pick one that matches the deployment model. Document token lifetime and refresh/revocation strategy.
+5. **Set pagination style** — cursor-based for any collection that grows; offset only for truly static or small data. Mixing styles later is a breaking change.
+6. **Write `CLAUDE.md` entries** for each decision so contributors don't re-litigate them.
+7. **Store the decisions:**
+   ```
+   memory_store("decision", "api: transport=[x], error shape=[x], versioning=[x], auth=[x], pagination=[x]", ["api", "conventions"])
+   ```
+
 ## Decision: which transport
 
 | Choose | When |

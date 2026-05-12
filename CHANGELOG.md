@@ -7,6 +7,15 @@ Versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ---
 
+## [2.0.1] — 2026-05-12
+
+### Fixed
+
+- `cil --version` now reads version from `package.json` at runtime instead of being hardcoded
+- Test runner (`vitest`) downgraded from v4 to v3 to restore compatibility with Node.js 20.8.x (v4 requires Node ≥ 20.12.0 due to `rolldown` dependency)
+
+---
+
 ## [1.1.0] — 2026-05-07
 
 ### Added

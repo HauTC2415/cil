@@ -1,6 +1,6 @@
 {
   "name": "@hautc.it/cil",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Claude Intelligence Layer — token-efficient context runtime for Claude Code",
   "type": "module",
   "bin": {
@@ -60,10 +60,10 @@
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^25.6.2",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.5"
+    "vitest": "^3.2.0"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=20.0.0"
   },
   "files": [
     "dist/",

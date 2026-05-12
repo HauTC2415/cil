@@ -34,8 +34,36 @@ jobs:
       - name: Run tests
         run: npm test
 
-      - name: Check templates ↔ commands sync
-        run: npm run sync-templates
-
       - name: Verify package
         run: npm pack --dry-run
+
+  sync-commands:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.x
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check sync (PR)
+        if: github.event_name == 'pull_request'
+        run: npm run sync-templates
+
+      - name: Auto-sync and commit (main)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          npm run sync-templates -- --apply
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git diff --quiet || (
+            git add .claude/commands/
+            git commit -m "chore(commands): auto-sync from templates [skip ci]"
+            git push
+          )

@@ -1,5 +1,8 @@
 #!/usr/bin/env node
+import fs from 'fs';
+import path from 'path';
 import { Command } from 'commander';
+import { getPackageRoot } from './lib/paths.js';
 import { initCommand } from './commands/init.js';
 import { doctorCommand } from './commands/doctor.js';
 import { compactCommand } from './commands/compact.js';
@@ -13,12 +16,16 @@ import { pruneCommand } from './commands/prune.js';
 import { uninstallCommand } from './commands/uninstall.js';
 import { upgradeCommand } from './commands/upgrade.js';
 
+const pkg = JSON.parse(
+  fs.readFileSync(path.join(getPackageRoot(), 'package.json'), 'utf-8'),
+) as { version: string };
+
 const program = new Command();
 
 program
   .name('cil')
   .description('Claude Intelligence Layer — token-efficient context runtime for Claude Code')
-  .version('1.0.0');
+  .version(pkg.version);
 
 program
   .command('init')
